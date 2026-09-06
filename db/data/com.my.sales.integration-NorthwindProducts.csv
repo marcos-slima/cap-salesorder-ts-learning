@@ -1,0 +1,5 @@
+northwindProductID,productName,supplierID,categoryID,quantityPerUnit,unitPrice,unitsInStock,unitsOnOrder,discontinued,importRun_ID,localProductCode,localProduct_ID,createdAt,createdBy,modifiedAt,modifiedBy
+1,"NW Laptop Pro 15""",100,10,1 unit,40.00,25,0,false,8b60803f-8251-4176-82b0-edf737a65696,ELE-001,e23c5818-9799-437c-9792-a50789692584,2026-04-13,integration-user,2026-04-13,integration-user
+2,NW USB-C Hub,101,11,1 unit,60.00,30,1,false,8b60803f-8251-4176-82b0-edf737a65696,ELE-002,d9866cb8-cf14-4adf-842b-5e9a003131f8,2026-04-13,integration-user,2026-04-13,integration-user
+3,NW Wireless Mouse,102,12,1 unit,80.00,35,2,false,8b60803f-8251-4176-82b0-edf737a65696,ELE-003,8df34808-bacf-4d8d-bccd-21a556c10c28,2026-04-13,integration-user,2026-04-13,integration-user
+4,NW Copper Wire,103,13,1 unit,100.00,40,3,false,8b60803f-8251-4176-82b0-edf737a65696,RAW-001,3a45c35c-b167-4462-93b6-820211f838de,2026-04-13,integration-user,2026-04-13,integration-user

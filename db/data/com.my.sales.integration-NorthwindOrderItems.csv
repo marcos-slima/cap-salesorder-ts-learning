@@ -1,0 +1,7 @@
+northwindOrderID,northwindProductID,unitPrice,quantity,discount,lineTotal,importRun_ID,localItem_ID,createdAt,createdBy,modifiedAt,modifiedBy
+11000,2,60.0000,2,0.1000,108.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user
+11001,2,60.0000,10,0.1000,540.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user
+11002,1,40.0000,6,0.1000,216.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user
+11003,1,40.0000,13,0.1000,468.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user
+11004,3,80.0000,14,0.1000,1008.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user
+11005,1,40.0000,3,0.1000,108.0000,8b60803f-8251-4176-82b0-edf737a65696,,2026-04-13,integration-user,2026-04-13,integration-user

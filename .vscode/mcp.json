@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "${workspaceFolder}/db/db.sqlite"]
+    }
+  }
+}

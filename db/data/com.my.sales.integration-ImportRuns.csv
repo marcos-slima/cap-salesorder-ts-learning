@@ -1,0 +1,3 @@
+ID,source,startedAt,completedAt,status,recordsImported,errorMessage,createdAt,createdBy,modifiedAt,modifiedBy
+8b60803f-8251-4176-82b0-edf737a65696,northwind-odata,2026-04-13T08:00:00,2026-04-13T08:01:10,completed,18,,2026-04-13,integration-user,2026-04-13,integration-user
+0be4336d-c61b-49d7-b2a1-f67969a8f76e,dummyjson-rest,2026-04-13T08:00:00,2026-04-13T08:01:10,completed,6,,2026-04-13,integration-user,2026-04-13,integration-user

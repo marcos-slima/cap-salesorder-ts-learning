@@ -1,0 +1,145 @@
+{
+  "_version": "1.82.0",
+  "sap.app": {
+    "id": "salesorder-analytics-alp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:alp",
+      "version": "1.20.3",
+      "toolsId": "3274b09d-269c-4f30-9846-bd94bdf6c36a"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/api/analytics/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "salesorder-analytics-alp.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "OpenOrdersQueryList",
+          "target": "OpenOrdersQueryList"
+        },
+        {
+          "pattern": "OpenOrdersQuery({key}):?query:",
+          "name": "OpenOrdersQueryObjectPage",
+          "target": "OpenOrdersQueryObjectPage"
+        }
+      ],
+      "targets": {
+        "OpenOrdersQueryList": {
+          "type": "Component",
+          "id": "OpenOrdersQueryList",
+          "name": "sap.fe.templates.AnalyticalListPage",
+          "options": {
+            "settings": {
+              "entitySet": "OpenOrdersQuery",
+              "contextPath": "/OpenOrdersQuery",
+              "variantManagement": "Page",
+              "initialLoad": "Enabled",
+              "defaultTemplateAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#ALP",
+              "navigation": {
+                "OpenOrdersQuery": {
+                  "detail": {
+                    "route": "OpenOrdersQueryObjectPage"
+                  }
+                }
+              },
+              "chartSettings": {
+                "id": "OpenOrdersChart",
+                "entitySet": "OpenOrdersQuery"
+              }
+            }
+          }
+        },
+        "OpenOrdersQueryObjectPage": {
+          "type": "Component",
+          "id": "OpenOrdersQueryObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/OpenOrdersQuery"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "analytical"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}

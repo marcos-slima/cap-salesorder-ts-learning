@@ -1,0 +1,64 @@
+{
+  "build": {
+    "target": "gen",
+    "tasks": [
+      {
+        "for":     "hana",
+        "src":     "db",
+        "options": { "model": ["db", "srv"] }
+      },
+      {
+        "for": "nodejs",
+        "src": "srv",
+        "options": { "model": ["db", "srv"] }
+      }
+    ]
+  },
+
+  "odata": {
+    "version": "v4",
+    "flavour": "x4"
+  },
+
+  "log": {
+    "format": "json"
+  },
+
+  "i18n": {
+    "default_language": "en",
+    "fallback_bundle":  "_i18n/i18n"
+  },
+
+  "requires": {
+    "Northwind": {
+      "kind": "odata-v4",
+      "credentials": {
+        "url": "https://services.odata.org/V4/Northwind/Northwind.svc"
+      }
+    },
+
+    "cds.xt.SaasProvisioningService": {
+      "[production]" : { "kind": "saas-provisioning" }
+    },
+    "cds.xt.DeploymentService": {
+      "[production]" : true
+    },
+    "cds.xt.ExtensibilityService": {
+      "[production]" : true
+    }
+  },
+
+  "multitenancy": {
+    "[production]" : {
+      "kind": "hana"
+    }
+  },
+
+  "cds.xt.linter": {
+    "element-prefix"    : "Z_",
+    "namespace-blocklist": [],
+    "extension-allowlist": [
+      { "for": ["SalesOrderService.SalesOrders"], "new-fields": true }
+    ]
+  }
+}

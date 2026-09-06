@@ -1,0 +1,7 @@
+ID,partner_ID,addressType,street,city,postalCode,country_code,isDefault,createdAt,createdBy,modifiedAt,modifiedBy
+ff500b2e-7815-40ac-a562-4eac8ccc98f8,04fcc26f-04f8-4adf-8391-8cb0ce6c31ff,DEFAULT,123 Main St,New York,10001,US,true,2025-01-01,admin,2025-01-01,admin
+5ef09942-eeea-4464-b497-fc6fd3b107ef,f63dbefb-b3ab-4a09-85b3-2de96f8881de,BILL,Hauptstr. 45,Berlin,10115,DE,false,2025-01-01,admin,2025-01-01,admin
+95bcba6a-ad14-4caa-b42d-60910ee9833a,71565323-3964-46fd-8800-1401b82c80a2,SHIP,Av. Paulista 1000,São Paulo,01311-100,BR,false,2025-01-01,admin,2025-01-01,admin
+575cb710-9c39-49d9-8302-d1a2971123b8,4948f3ac-f5df-4a13-8373-a02774767810,BILL,321 Tech Way,San Francisco,94105,US,false,2025-01-01,admin,2025-01-01,admin
+bc0305ad-9e5f-45d5-8e5f-314ad279f2ca,4e55a9ff-6a03-4f15-8a1f-e2f4e9463338,DEFAULT,50 Bond Street,London,W1A 1AA,GB,true,2025-01-01,admin,2025-01-01,admin
+ce9e400a-ab4e-4c6f-a9b6-ca1d2a636584,b5d74a08-013e-4207-a3bb-75f8e8879f2a,SHIP,2-1-1 Marunouchi,Tokyo,100-0005,JP,false,2025-01-01,admin,2025-01-01,admin

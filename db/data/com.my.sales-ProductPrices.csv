@@ -1,0 +1,7 @@
+product_ID,priceType,validFrom,validTo,amount,currency_code,createdAt,createdBy,modifiedAt,modifiedBy
+e23c5818-9799-437c-9792-a50789692584,LIST,2025-01-01,,1200.00,USD,2025-01-01,admin,2025-01-01,admin
+d9866cb8-cf14-4adf-842b-5e9a003131f8,LIST,2025-01-01,,89.00,USD,2025-01-01,admin,2025-01-01,admin
+8df34808-bacf-4d8d-bccd-21a556c10c28,LIST,2025-01-01,,45.00,USD,2025-01-01,admin,2025-01-01,admin
+3a45c35c-b167-4462-93b6-820211f838de,LIST,2025-01-01,,12.00,USD,2025-01-01,admin,2025-01-01,admin
+e0ad844b-faaa-4043-8bf4-0e2ddf73cfc2,LIST,2025-01-01,,8.00,USD,2025-01-01,admin,2025-01-01,admin
+c83c41f5-f653-4775-b916-e233a69b7031,LIST,2025-01-01,,150.00,USD,2025-01-01,admin,2025-01-01,admin

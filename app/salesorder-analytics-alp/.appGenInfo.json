@@ -1,0 +1,28 @@
+{
+  "generationParameters": {
+    "generationDate": "Mon Apr 13 2026 23:36:11 GMT-0300 (Brasilia Standard Time)",
+    "generatorPlatform": "Visual Studio Code",
+    "serviceType": "Local CAP",
+    "metadataFilename": "",
+    "serviceUrl": "http://localhost:4004/api/analytics/",
+    "appName": "salesorder-analytics",
+    "appTitle": "Sales Order Analytics",
+    "appDescription": "An SAP Fiori application.",
+    "appNamespace": "com.my.app",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.146.0",
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": false,
+    "generatorVersion": "1.20.3",
+    "template": "Analytical List Page V4",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [
+      {
+        "type": "Main Entity",
+        "value": "OpenOrdersQuery"
+      }
+    ],
+    "launchText": "To launch the generated app, start your CAP project:  and navigate to the following location in your browser:\n\nhttp://localhost:4004/com.my.app.salesorderanalytics/index.html"
+  }
+}

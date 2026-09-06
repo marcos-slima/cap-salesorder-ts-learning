@@ -1,0 +1,4 @@
+ID,code,name,country_code,createdAt,createdBy,modifiedAt,modifiedBy
+13928b59-b961-48f6-b5e7-0f6c4f20c7af,ORUS,Sales Organization US,US,2026-04-12,admin,2026-04-12,admin
+79cb1dde-8463-4621-bacb-b971dfbcc03e,ORDE,Sales Organization DE,DE,2026-04-12,admin,2026-04-12,admin
+cdef3aa8-4bdc-464e-802e-98d1cff2653c,ORBR,Sales Organization BR,BR,2026-04-12,admin,2026-04-12,admin

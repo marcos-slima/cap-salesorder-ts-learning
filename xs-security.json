@@ -1,0 +1,94 @@
+{
+  "xsappname": "cap-salesorder-ts",
+  "tenant-mode": "dedicated",
+  "description": "XSUAA security descriptor for the CAP Sales Order service",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.SalesProcessor",
+      "description": "Create and update own sales orders"
+    },
+    {
+      "name": "$XSAPPNAME.SalesManager",
+      "description": "Full CRUD + submit, confirm delivery, and logical delete"
+    },
+    {
+      "name": "$XSAPPNAME.SalesAuditor",
+      "description": "Read-only access to all orders and analytics"
+    },
+    {
+      "name": "$XSAPPNAME.CatalogReader",
+      "description": "Read master and reference data (products, partners, org)"
+    },
+    {
+      "name": "$XSAPPNAME.AnalyticsReader",
+      "description": "Read analytical views in SalesAnalyticsService"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "SalesProcessor",
+      "description": "Sales order processor — create and update orders",
+      "scope-references": [
+        "$XSAPPNAME.SalesProcessor",
+        "$XSAPPNAME.CatalogReader"
+      ]
+    },
+    {
+      "name": "SalesManager",
+      "description": "Sales manager — full access including domain actions",
+      "scope-references": [
+        "$XSAPPNAME.SalesProcessor",
+        "$XSAPPNAME.SalesManager",
+        "$XSAPPNAME.CatalogReader",
+        "$XSAPPNAME.AnalyticsReader"
+      ]
+    },
+    {
+      "name": "SalesAuditor",
+      "description": "Read-only auditor — orders, catalog, analytics",
+      "scope-references": [
+        "$XSAPPNAME.SalesAuditor",
+        "$XSAPPNAME.CatalogReader",
+        "$XSAPPNAME.AnalyticsReader"
+      ]
+    },
+    {
+      "name": "CatalogReader",
+      "description": "Reference data reader — F4 helpers and catalog browsing",
+      "scope-references": [
+        "$XSAPPNAME.CatalogReader"
+      ]
+    },
+    {
+      "name": "AnalyticsReader",
+      "description": "Analytics dashboard reader — SAC and Datasphere",
+      "scope-references": [
+        "$XSAPPNAME.AnalyticsReader"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "Sales_Processor",
+      "description": "Assign to sales order processors",
+      "role-template-references": [
+        "$XSAPPNAME.SalesProcessor"
+      ]
+    },
+    {
+      "name": "Sales_Manager",
+      "description": "Assign to sales managers",
+      "role-template-references": [
+        "$XSAPPNAME.SalesManager"
+      ]
+    },
+    {
+      "name": "Sales_Auditor",
+      "description": "Assign to auditors and compliance roles",
+      "role-template-references": [
+        "$XSAPPNAME.SalesAuditor"
+      ]
+    }
+  ],
+  "attributes": []
+}

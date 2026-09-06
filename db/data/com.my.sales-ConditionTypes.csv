@@ -1,0 +1,5 @@
+code,name,descr,calculationType,statisticalFlag
+PR00,Price,Base price,A,false
+K007,Discount,Volume discount,A,false
+MWST,Tax,Sales tax,A,true
+ZWKS,Freight,Shipping cost,C,false

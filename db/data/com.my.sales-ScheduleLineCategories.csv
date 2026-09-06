@@ -1,0 +1,4 @@
+code,name,descr
+CP,Standard Order,Standard order line
+CN,Make-to-Order,Make-to-order line
+CS,Third Party,Third party order line

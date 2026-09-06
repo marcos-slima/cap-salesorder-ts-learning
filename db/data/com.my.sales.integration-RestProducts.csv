@@ -1,0 +1,7 @@
+externalID,title,description,price,discountPct,rating,stock,brand,category,importRun_ID,localProductCode,localProduct_ID,createdAt,createdBy,modifiedAt,modifiedBy
+9000,"REST Laptop Pro 15""",High-performance laptop,19.00,0.1200,3.50,40,Contoso,office,0be4336d-c61b-49d7-b2a1-f67969a8f76e,ELE-001,e23c5818-9799-437c-9792-a50789692584,2026-04-13,integration-user,2026-04-13,integration-user
+9001,REST USB-C Hub,7-in-1 USB hub,32.00,0.1200,3.70,43,Northwind,components,0be4336d-c61b-49d7-b2a1-f67969a8f76e,ELE-002,d9866cb8-cf14-4adf-842b-5e9a003131f8,2026-04-13,integration-user,2026-04-13,integration-user
+9002,REST Wireless Mouse,Ergonomic wireless mouse,45.00,0.1200,3.90,46,Contoso,office,0be4336d-c61b-49d7-b2a1-f67969a8f76e,ELE-003,8df34808-bacf-4d8d-bccd-21a556c10c28,2026-04-13,integration-user,2026-04-13,integration-user
+9003,REST Copper Wire,Electrical copper wire,58.00,0.1200,4.10,49,Northwind,components,0be4336d-c61b-49d7-b2a1-f67969a8f76e,RAW-001,3a45c35c-b167-4462-93b6-820211f838de,2026-04-13,integration-user,2026-04-13,integration-user
+9004,REST Plastic Resin,ABS plastic resin,71.00,0.1200,4.30,52,Northwind,components,0be4336d-c61b-49d7-b2a1-f67969a8f76e,RAW-002,e0ad844b-faaa-4043-8bf4-0e2ddf73cfc2,2026-04-13,integration-user,2026-04-13,integration-user
+9005,REST PCB Assembly,Printed circuit board,84.00,0.1200,4.50,55,Acme,electronics,0be4336d-c61b-49d7-b2a1-f67969a8f76e,SEM-001,c83c41f5-f653-4775-b916-e233a69b7031,2026-04-13,integration-user,2026-04-13,integration-user

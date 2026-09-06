@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Domain — Entity Relationship Diagram</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 32px 24px 48px;
+  }
+
+  header {
+    max-width: 1100px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    border-bottom: 1px solid #2d3748;
+    padding-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: #f7fafc;
+  }
+
+  header p {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 2px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #1a2535;
+    border: 1px solid #2d4a6e;
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #63b3ed;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: auto;
+    align-self: center;
+  }
+
+  #diagram-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #161b27;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    padding: 32px 24px;
+    overflow-x: auto;
+  }
+
+  #erd svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  /* override mermaid defaults for dark theme */
+  #erd .er.entityBox    { fill: #1e2d45 !important; stroke: #3182ce !important; }
+  #erd .er.attributeBoxOdd  { fill: #192030 !important; stroke: none !important; }
+  #erd .er.attributeBoxEven { fill: #1a2535 !important; stroke: none !important; }
+  #erd .er.relationshipLine { stroke: #4a5568 !important; }
+  #erd text { fill: #cbd5e0 !important; }
+  #erd .er.entityLabel  { fill: #90cdf4 !important; font-weight: 600 !important; }
+
+  footer {
+    max-width: 1100px;
+    margin: 24px auto 0;
+    font-size: 11px;
+    color: #4a5568;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <p>com.my.sales</p>
+    <h1>Sales Domain — Entity Relationship Diagram</h1>
+  </div>
+  <div class="badges">
+    <span class="badge">SAP CAP</span>
+    <span class="badge">@sap/cds ^8</span>
+    <span class="badge">HANA Cloud</span>
+    <span class="badge">OData v4</span>
+  </div>
+</header>
+
+<div id="diagram-container">
+  <div id="erd"></div>
+</div>
+
+<footer>Sales Bounded Context · generated from sales-orders.cds + master-data.cds</footer>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Segoe UI", system-ui, sans-serif',
+  themeVariables: {
+    darkMode: true,
+    fontSize: '13px',
+    fontFamily: '"Segoe UI", system-ui, sans-serif',
+    lineColor:        '#4a5568',
+    textColor:        '#cbd5e0',
+    primaryColor:     '#1e2d45',
+    primaryBorderColor: '#3182ce',
+    primaryTextColor: '#90cdf4',
+    edgeLabelBackground: '#161b27',
+    background:       '#161b27',
+    mainBkg:          '#1e2d45',
+    nodeBorder:       '#3182ce',
+    clusterBkg:       '#192030',
+    titleColor:       '#e2e8f0',
+    attributeBackgroundColorOdd:  '#192030',
+    attributeBackgroundColorEven: '#1a2535',
+  },
+});
+
+const diagram = `erDiagram
+  SalesOrders {
+    UUID        ID PK
+    String      salesOrder UK
+    Date        orderDate
+    Date        requestedDelivDate
+    Date        pricingDate
+    String      purchaseOrderNumber
+    Decimal     netAmount
+    Currency    transactionCurrency
+    String      overallStatus
+    String      deliveryStatus
+    String      billingStatus
+    String      deletionIndicator
+    Timestamp   createdAt
+    String      createdBy
+    Timestamp   modifiedAt
+    String      modifiedBy
+  }
+  SalesOrderItems {
+    UUID        ID PK
+    UUID        order_ID FK
+    Integer     itemNumber
+    Decimal     orderQuantity
+    String      orderQuantityUnit
+    Decimal     netAmount
+    Currency    transactionCurrency
+    UUID        higherLevelItem_ID FK
+    String      deletionIndicator
+  }
+  SalesOrderScheduleLines {
+    UUID        item_ID FK
+    Integer     scheduleLineNo PK
+    Date        deliveryDate
+    Decimal     confirmedQty
+    Decimal     requestedQty
+    String      quantityUnit
+    String      mrpElement
+  }
+  SalesOrderItemConditions {
+    UUID        item_ID FK
+    Integer     conditionStep PK
+    Decimal     conditionRate
+    Currency    conditionCurrency
+    Decimal     conditionValue
+    Decimal     conditionBase
+    String      calculationType
+    Boolean     statisticalFlag
+  }
+  SalesOrderPartners {
+    UUID        order_ID FK
+    String      role PK
+    UUID        partner_ID FK
+    UUID        address_ID FK
+    String      partnerName
+  }
+  SalesOrderHeaderTexts {
+    UUID        order_ID FK
+    String      textId PK
+    String      language
+    LargeString text
+  }
+  SalesOrderItemTexts {
+    UUID        item_ID FK
+    String      textId PK
+    String      language
+    LargeString text
+  }
+  Products {
+    UUID        ID PK
+    String      code UK
+    String      name
+    String      description
+    String      baseUnit
+    String      authorizationGroup
+  }
+  ProductPrices {
+    UUID        product_ID FK
+    String      priceType
+    Date        validFrom
+    Date        validTo
+    Decimal     amount
+    Currency    currency
+  }
+  ProductTypes {
+    String      code PK
+    String      name
+  }
+  SalesOrganizations {
+    UUID        ID PK
+    String      code UK
+    String      name
+    Country     country
+  }
+  SalesAreas {
+    UUID        ID PK
+    String      name
+  }
+  DistributionChannels {
+    String      code PK
+    String      name
+  }
+  Divisions {
+    String      code PK
+    String      name
+  }
+  SalesOrderTypes {
+    String      code PK
+    String      name
+  }
+  ConditionTypes {
+    String      code PK
+    String      calculationType
+    Boolean     statisticalFlag
+  }
+  ScheduleLineCategories {
+    String      code PK
+    String      name
+  }
+  BusinessPartners {
+    UUID        ID PK
+    String      code UK
+    String      name
+    Country     country
+    Language    language
+    Boolean     blocked
+  }
+  BusinessPartnerAddresses {
+    UUID        ID PK
+    UUID        partner_ID FK
+    String      addressType
+    String      street
+    String      city
+    Country     country
+    Boolean     isDefault
+  }
+
+  SalesOrders           ||--o{ SalesOrderItems            : "items (Composition)"
+  SalesOrders           ||--o{ SalesOrderPartners         : "partners (Composition)"
+  SalesOrders           ||--o{ SalesOrderHeaderTexts      : "texts (Composition)"
+  SalesOrderItems       ||--o{ SalesOrderScheduleLines    : "scheduleLines (Composition)"
+  SalesOrderItems       ||--o{ SalesOrderItemConditions   : "conditions (Composition)"
+  SalesOrderItems       ||--o{ SalesOrderItemTexts        : "texts (Composition)"
+  SalesOrderItems       }o--o| SalesOrderItems            : "higherLevelItem"
+  SalesOrderItems       }o--|| Products                   : "product"
+  SalesOrderItemConditions }o--|| ConditionTypes          : "conditionType"
+  SalesOrderScheduleLines  }o--|| ScheduleLineCategories  : "scheduleLineCategory"
+  SalesOrderPartners    }o--|| BusinessPartners           : "partner"
+  SalesOrderPartners    }o--o| BusinessPartnerAddresses   : "address"
+  SalesOrders           }o--|| SalesOrderTypes            : "salesOrderType"
+  SalesOrders           }o--|| SalesAreas                 : "salesArea"
+  SalesAreas            }o--|| SalesOrganizations         : "salesOrganization"
+  SalesAreas            }o--|| DistributionChannels       : "distributionChannel"
+  SalesAreas            }o--|| Divisions                  : "division"
+  Products              ||--o{ ProductPrices              : "prices (Composition)"
+  Products              }o--|| ProductTypes               : "type"
+  BusinessPartners      ||--o{ BusinessPartnerAddresses   : "addresses (Composition)"
+`;
+
+const { svg } = await mermaid.render('erd-svg', diagram);
+document.getElementById('erd').innerHTML = svg;
+
+// round entity box corners
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x,  h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill','stroke','stroke-width','class','style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+// strip row borders
+document.querySelectorAll(
+  '#erd svg .row-rect-odd path, #erd svg .row-rect-even path'
+).forEach(p => p.setAttribute('stroke', 'none'));
+</script>
+</body>
+</html>

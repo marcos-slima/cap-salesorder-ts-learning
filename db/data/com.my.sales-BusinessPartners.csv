@@ -1,0 +1,7 @@
+ID,code,name,name2,country_code,language_code,taxNumber1,blocked,createdAt,createdBy,modifiedAt,modifiedBy
+04fcc26f-04f8-4adf-8391-8cb0ce6c31ff,1000000000,Acme Corporation,Branch 1,US,en,TAX1000,false,2025-01-01,admin,2025-01-01,admin
+f63dbefb-b3ab-4a09-85b3-2de96f8881de,1000000001,Deutsche Industrie,Branch 2,DE,de,TAX1001,false,2025-01-01,admin,2025-01-01,admin
+71565323-3964-46fd-8800-1401b82c80a2,1000000002,Brasil Trading,Branch 3,BR,pt,TAX1002,false,2025-01-01,admin,2025-01-01,admin
+4948f3ac-f5df-4a13-8373-a02774767810,1000000003,Tech Solutions,Branch 4,US,en,TAX1003,false,2025-01-01,admin,2025-01-01,admin
+4e55a9ff-6a03-4f15-8a1f-e2f4e9463338,1000000004,Global Parts,Branch 5,GB,en,TAX1004,false,2025-01-01,admin,2025-01-01,admin
+b5d74a08-013e-4207-a3bb-75f8e8879f2a,1000000005,Nippon Manufacturing,Branch 6,JP,ja,TAX1005,false,2025-01-01,admin,2025-01-01,admin

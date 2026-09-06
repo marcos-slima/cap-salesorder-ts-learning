@@ -1,0 +1,5 @@
+code,name,descr
+OR,Standard Order,Standard sales order
+ZO,Zero-price Order,Order with zero value
+KO,Consignment Order,Consignment sales order
+QT,Quote,Sales quotation

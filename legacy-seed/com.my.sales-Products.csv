@@ -1,0 +1,7 @@
+ID,code,name,description,type_code,baseUnit,authorizationGroup,createdAt,createdBy,modifiedAt,modifiedBy
+c640264d-40d4-48d1-b343-8add51563dd9,ELE-001,Laptop Pro 15,High-performance laptop,FERT,PC,PROD,2026-04-12,admin,2026-04-12,admin
+87eed975-74a1-4895-a23d-25bc5195831a,ELE-002,USB-C Hub,7-in-1 USB hub,FERT,PC,PROD,2026-04-12,admin,2026-04-12,admin
+28513b49-9028-4f50-b7a6-c8022ae0c36f,ELE-003,Wireless Mouse,Ergonomic wireless mouse,FERT,PC,PROD,2026-04-12,admin,2026-04-12,admin
+67f48835-4794-42eb-bd67-cb70c9a4cda5,RAW-001,Copper Wire,Electrical copper wire,ROH,KG,PROD,2026-04-12,admin,2026-04-12,admin
+a93d7906-10a1-45ff-9192-3057f9232bbe,RAW-002,Plastic Resin,ABS plastic resin,ROH,KG,PROD,2026-04-12,admin,2026-04-12,admin
+0cf83889-e35a-459d-8cb9-f85a26e5c6f2,SEM-001,PCB Assembly,Printed circuit board,HALB,PC,PROD,2026-04-12,admin,2026-04-12,admin

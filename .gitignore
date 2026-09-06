@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# CAP build output
+gen/
+dist/
+app/*/dist/
+
+# TypeScript generated types (regenerate with: npm run typegen)
+@cds-models/
+
+# SQLite dev databases
+*.db
+*.sqlite
+
+# Environment variables — never commit secrets
+.env
+.env.*
+default-env.json
+private-key.pem
+
+# SAP BTP / MTA build artefacts
+mta_archives/
+*.mtar
+resources/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+
+# HANA artefacts
+.hdbtabledata
+.cap-salesorder-ts-learning_mta_build_tmp/
