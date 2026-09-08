@@ -499,6 +499,30 @@ Objective: quickly isolate regressions across authorization, OData metadata, han
   - Check orchestrator flow in srv/integration/import-orchestrator.ts
   - Check source clients in srv/integration/northwind-client.ts and srv/integration/rest-client.ts
 
+- Symptom: xsuaa service creation fails with "Unrecognized field" parsing xs-security.json
+  - oauth2-configuration fields must be camelCase (tokenValidity, refreshTokenValidity),
+    not kebab-case (token-validity, refresh-validity) - kebab-case is only used in mta.yaml
+    build/module keys, not inside the XSUAA broker's own config schema
+
+- Symptom: app crashes on boot with "Cannot find module '@cap-js/hana'"
+  - The HANA driver is not a transitive dependency of @sap/cds - it must be an explicit
+    entry in package.json dependencies (not devDependencies) for production/HANA profile
+  - Local development against SQLite (@cap-js/sqlite in devDependencies) does not
+    surface this - only a real HANA deploy does
+
+- Symptom: app crashes on boot with "Cannot find module '@sap/xb-msg-amqp-v100'"
+  - package.json cds.requires.messaging.[production] references
+    enterprise-messaging-shared, but no Event Mesh service is bound in mta.yaml
+  - Fix without touching the shared package.json: override via env var in the mta.yaml
+    module's properties block - CDS_REQUIRES_MESSAGING_KIND: file-based-messaging
+
+- Symptom: db-deployer fails with "inserted value too large for column"
+  - A seed CSV value exceeds the CDS-declared String(N) length for that field
+  - SQLite (local dev) is lenient about string length; HANA enforces it strictly -
+    this only surfaces on a real HANA deploy, never against cds watch locally
+  - Fix the seed data to match the real-world domain value (e.g. SAP MTART code
+    HALB, 4 chars) rather than widening the CDS type to accommodate a typo
+
 ### 12.2 Breakpoint Strategy by Layer
 
 1. Entry and request normalization: srv/server.ts
