@@ -556,3 +556,91 @@ development. Each rule has a deterministic trigger and a known fix.
 | `@requires` | Service | Service-level role guard; never mix with `authenticated-user` |
 | `@cds.redirection.target` | Entity in service | Explicit redirect target when multiple candidates exist for same domain entity |
 | `localized` | String field | CAP generates `_texts` table; auto language resolution at runtime |
+
+---
+
+## 9. Deployment: Single-Tenant Validation Variant
+
+The reference `mta.yaml` in this project is designed as a full
+multi-tenant SaaS blueprint — MTX sidecar, Service Manager (HDI per
+tenant), Event Mesh, Connectivity service, `tenant-mode: shared`.
+That is correct for the reference architecture this project
+demonstrates, but it is disproportionate machinery just to validate
+that the domain model and services work against real HANA Cloud +
+XSUAA.
+
+A stripped single-tenant variant was used for that validation —
+same domain model, same CDS service definitions, no code changes to
+`db/` or `srv/*.cds`, only a reduced `mta.yaml`:
+
+- Modules: `cap-salesorder-ts-srv` + `cap-salesorder-ts-db-deployer`
+  only (no MTX sidecar).
+- Resources: `cap-salesorder-db` (HANA) + `cap-salesorder-auth`
+  (XSUAA) only (no Event Mesh, Connectivity, Service Manager).
+- `tenant-mode: dedicated` instead of `shared` — the standalone
+  `xs-security.json` in this repo already defaults to `dedicated`,
+  which is what a single-tenant variant needs; the multi-tenant
+  `mta.yaml` overrides this to `shared` in its inline `config:` block.
+
+### Bugs found only when deploying against real HANA (not `cds watch`)
+
+None of these surface locally against SQLite — they only appear on a
+real Cloud Foundry + HANA Cloud deploy:
+
+1. **`oauth2-configuration` fields must be camelCase**
+   (`tokenValidity`, `refreshTokenValidity`), not kebab-case
+   (`token-validity`, `refresh-validity`) — kebab-case is only valid
+   in `mta.yaml` module/build keys, not inside the XSUAA broker's own
+   config schema. Wrong case fails service creation with
+   `Unrecognized field`.
+2. **`@cap-js/hana` is not a transitive dependency** of `@sap/cds` —
+   it must be an explicit `dependencies` entry (not `devDependencies`)
+   for the production/HANA profile. Without it: `Cannot find module
+   '@cap-js/hana'` at boot.
+3. **Seed data can violate `String(N)` length against HANA even when
+   SQLite accepted it silently** — SQLite is lenient about string
+   length, HANA enforces it strictly. One seed CSV had `HALBF` (5
+   chars) where the CDS model declares `String(4)` (matching the real
+   SAP MTART code `HALB`) — fixed the data, not the type.
+4. **`httpx`-style form encoding of OData `$filter` breaks against
+   the CAP OData v4 parser**: a query param encoded with `+` for
+   spaces (form-urlencoded convention) is rejected — the parser
+   expects strict RFC 3986 `%20`. Affects any external client library
+   that defaults to form encoding for query params, not specific to
+   this project's client code.
+
+### `client_credentials` scope grant — simpler than it first looks
+
+For a machine-to-machine client (no interactive user) to receive a
+scope in its token, **Role Collections do not apply** — those are for
+interactive login (Authorization Code Grant) only. The mechanism for
+`client_credentials` is the `authorities` array in `xs-security.json`:
+
+```json
+"authorities": ["$XSAPPNAME.CatalogReader"]
+```
+
+Added directly to the app's own `xs-security.json` (no separate
+consumer XSUAA instance needed for a same-instance grant), redeployed,
+then a fresh service key generated. Verified: token response `scope`
+field included `<xsappname>.CatalogReader` alongside `uaa.resource`.
+
+### HANA Cloud Free Tier: automatic daily stop
+
+The Free Tier HANA instance **stops automatically every day at 1PM
+local time** — not a fault, documented platform behavior. Any deploy
+or test attempted while stopped fails with `HANA Database instance is
+stopped` (service creation) or `Pool resource could not be acquired
+within 1s` (already-running app trying to query). Resume manually via
+**HANA Cloud Central → instance → Resume** before testing; takes a
+few minutes to reach `Running`.
+
+### Validation result
+
+`GET /api/catalog/Products?$top=3` against the deployed single-tenant
+variant, authenticated via `client_credentials` with the
+`CatalogReader` scope, returned real HANA-backed data — confirms the
+domain model, OData v4 service layer, and XSUAA integration are
+correct end-to-end. Not validated: the full multi-tenant MTX
+onboarding flow, Event Mesh publishing, or Connectivity service (all
+out of scope for this specific validation pass).
