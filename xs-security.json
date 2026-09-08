@@ -90,5 +90,8 @@
       ]
     }
   ],
-  "attributes": []
+  "attributes": [],
+  "authorities": [
+    "$XSAPPNAME.CatalogReader"
+  ]
 }

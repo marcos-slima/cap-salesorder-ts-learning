@@ -66,3 +66,6 @@ resources:
         oauth2-configuration:
           tokenValidity: 43200
           refreshTokenValidity: 86400
+          grant-types:
+            - client_credentials
+            - authorization_code
