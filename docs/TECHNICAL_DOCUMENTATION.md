@@ -362,7 +362,13 @@ Define os scopes e roles para o XSUAA:
 | `AnalyticsReader` | AnalyticsReader | Leitura de views analíticas |
 
 - Validade do token: **12 horas** / refresh: **24 horas**.
-- `tenant-mode: dedicated` — aplicação single-tenant.
+- `tenant-mode: shared` — o `mta.yaml` multi-tenant sobrescreve o
+  default `dedicated` do `xs-security.json` standalone via seu bloco
+  `config:` inline no deploy. Corrigido nesta revisao apos investigar
+  esse exato mecanismo durante a criacao da variante single-tenant de
+  validacao (ver `docs/ARCHITECTURE.md`, secao 9) - o `xs-security.json`
+  sozinho SO reflete `dedicated` quando usado fora do `mta.yaml` (como
+  na variante simplificada), nunca no deploy multi-tenant real.
 
 ---
 
