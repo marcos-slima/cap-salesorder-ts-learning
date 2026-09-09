@@ -27,7 +27,9 @@
     "@cap-js/hana": "^3.1.0",
     "@sap/cds": "^10.1.0",
     "@sap/xssec": "^4",
-    "express": "^4"
+    "dotenv": "^17.4.2",
+    "express": "^4",
+    "rhea": "^3.0.5"
   },
   "devDependencies": {
     "@cap-js/cds-test": "^1.0.2",
