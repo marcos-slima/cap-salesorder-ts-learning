@@ -644,3 +644,53 @@ domain model, OData v4 service layer, and XSUAA integration are
 correct end-to-end. Not validated: the full multi-tenant MTX
 onboarding flow, Event Mesh publishing, or Connectivity service (all
 out of scope for this specific validation pass).
+
+### Event Mesh: Solace Cloud direct connection (SDK-free alternative)
+
+SAP's own standalone Event Mesh service has been phased out for new
+BTPEA-contract customers (existing CPEA customers can still license
+it per SAP's own March 2026 community response — the deprecation is
+contract-model-specific, not universal), replaced by a choice between
+Advanced Event Mesh (AEM, licensed separately) or EMIS (Event Mesh
+embedded in Integration Suite, no extra license cost but requires a
+paid Integration Suite Standard/Premium subscription — not available
+on Trial). Neither path is free within a BTP Trial account.
+
+**Alternative used here**: AEM is Solace-powered under the hood, and
+Solace Cloud offers a genuinely free "Developer" tier broker
+(`console.solace.cloud`, no credit card), connected to directly via
+AMQP 1.0 — completely independent of any SAP-provisioned service or
+BTP entitlement.
+
+**Library choice**: `amqp10` (shown in Solace's own "Get Started"
+code samples) has not been published in 8 years and is unmaintained.
+Used `rhea` instead — the actively maintained AMQP 1.0 client
+(Apache-licensed, 86+ dependent projects, latest release within
+months at time of writing).
+
+**Two validation layers, not one**:
+
+1. `scripts/test-solace-connection.js` — raw AMQP 1.0 connectivity
+   smoke test via `rhea` directly (connect, open sender, publish).
+   Proves the broker is reachable and credentials are valid. Does
+   NOT exercise any CAP framework code.
+2. `srv/lib/solace-messaging-service.js` — a custom
+   `cds.MessagingService` subclass wired into the actual CAP Outbox
+   pattern. `scripts/test-solace-cds-integration.js` validates a full
+   round trip through the standard CAP API (`messaging.emit(event,
+   data)` → published via `rhea` to the real Solace broker →
+   received back via an AMQP receiver → dispatched to an app-level
+   `.on(event, handler)` — the same mechanism `cds.emit()` inside a
+   domain service handler would use in production.
+
+**Honesty note on the `MessagingService` subclass**: the exact
+internal contract for custom `cds.MessagingService` subclasses (how
+`init()`, `on()`, and the outbox dispatch interact) does not have
+solid, confirmed public documentation — this implementation was
+written from inferred patterns (official plugins like
+`@cap-js/event-broker`) and validated by running the round-trip test
+above, which passed on the first attempt. Not yet wired into any real
+domain event handler (`submitOrder`, `confirmDelivery`, etc.) or
+tested under the actual CAP Outbox's persistent/transactional
+guarantees (same-HANA-transaction write before async dispatch) — only
+the direct `messaging.emit()` call path is validated so far.
