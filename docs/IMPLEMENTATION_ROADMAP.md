@@ -526,20 +526,18 @@ Priorização estratégica para abordar as melhorias recomendadas na análise t�
 
 ## Timeline Consolidada
 
-```
-     Semana 1          Semana 2          Semana 3          Semana 4
-   ┌─────────┬──────────────────┬──────────────────┬──────────────────┐
-   │ Phase 1 │  Phase 2          │  Phase 3          │  Phase 4 + 5     │
-   │ (Quick  │  (Foundation)     │  (Observ.)        │  (Docs + Ext)    │
-   │  Wins)  │                   │                   │                  │
-   │         │                   │                   │                  │
-   │ 1.1 ✓   │  2.1 ✓           │  3.1 ✓           │  4.1 ✓          │
-   │ 1.2 ✓   │  2.2 ✓           │  3.2 ✓           │  4.2 ✓          │
-   │ 1.3 ✓   │  2.3 ✓           │                   │  4.3 ✓          │
-   │         │                   │                   │  5.1 ✓          │
-   │         │                   │                   │  5.2 ✓          │
-   │ 3 dias  │  7 dias          │  7 dias           │  10 dias        │
-   └─────────┴──────────────────┴──────────────────┴──────────────────┘
+```mermaid
+flowchart LR
+    P1["<b>Phase 1</b><br/>Quick Wins - 3 dias<br/>check 1.1 - check 1.2 - check 1.3"]
+    P2["<b>Phase 2</b><br/>Foundation - 7 dias<br/>check 2.1 - check 2.2 - check 2.3"]
+    P3["<b>Phase 3</b><br/>Observability - 7 dias<br/>check 3.1 - check 3.2"]
+    P4["<b>Phase 4+5</b><br/>Docs + Extension - 10 dias<br/>check 4.1 - check 4.2 - check 4.3 - check 5.1 - check 5.2"]
+    P1 --> P2 --> P3 --> P4
+
+    style P1 fill:#e6f4ea,stroke:#34a853
+    style P2 fill:#e6f4ea,stroke:#34a853
+    style P3 fill:#e6f4ea,stroke:#34a853
+    style P4 fill:#e6f4ea,stroke:#34a853
 ```
 
 **Total: ~27 dias (3-4 semanas) com 1 developer FTE**
