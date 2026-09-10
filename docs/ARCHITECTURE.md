@@ -16,25 +16,29 @@ creation through delivery confirmation and billing status update. It does NOT ow
 product master data, business partner master, or organisational structure. Those
 belong to supporting sub-domains and are referenced (not replicated) in production.
 
-```
-┌───────────────────────────────────────────────────────────┐
-│  Sales Bounded Context (this CAP application)             │
-│                                                           │
-│  Aggregate: SalesOrders ───────────────────────────────┐  │
-│    Root:    SalesOrders (VBAK)  ← cuid + managed       │  │
-│    Children (Composition — owned lifecycle):           │  │
-│      SalesOrderItems (VBAP)     ← cuid + managed       │  │
-│        SalesOrderItemConditions (KONV)  ← managed      │  │
-│        SalesOrderScheduleLines  (VBEP)  ← managed      │  │
-│        SalesOrderItemTexts              ← managed      │  │
-│      SalesOrderPartners (VBPA)          ← managed      │  │
-│      SalesOrderHeaderTexts              ← managed      │  │
-│                                                        │  │
-│  External references (Association — independent):  ────┘  │
-│    Products            → Product sub-domain               │
-│    BusinessPartners    → Partner sub-domain               │
-│    SalesAreas          → OrgStructure sub-domain          │
-└───────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph SBC["Sales Bounded Context (this CAP application)"]
+        direction TB
+        Root["<b>SalesOrders</b> (VBAK)<br/>cuid + managed<br/><i>Aggregate Root</i>"]
+        Items["SalesOrderItems (VBAP)<br/>cuid + managed"]
+        Cond["SalesOrderItemConditions (KONV)<br/>managed"]
+        Sched["SalesOrderScheduleLines (VBEP)<br/>managed"]
+        Texts["SalesOrderItemTexts<br/>managed"]
+        Partners["SalesOrderPartners (VBPA)<br/>managed"]
+        HTexts["SalesOrderHeaderTexts<br/>managed"]
+        Root -->|"Composition"| Items
+        Root -->|"Composition"| Partners
+        Root -->|"Composition"| HTexts
+        Items -->|"Composition"| Cond
+        Items -->|"Composition"| Sched
+        Items -->|"Composition"| Texts
+    end
+    Root -.->|"Association"| Products["Products<br/><i>Product sub-domain</i>"]
+    Root -.->|"Association"| BP["BusinessPartners<br/><i>Partner sub-domain</i>"]
+    Root -.->|"Association"| SA["SalesAreas<br/><i>OrgStructure sub-domain</i>"]
+
+    style Root fill:#e8f0fe,stroke:#4285f4
 ```
 
 > **Note on `cuid` placement:** Both `SalesOrders` and `SalesOrderItems` carry
@@ -443,44 +447,16 @@ using { com.my.sales as catalog } from '../db/masterdata/master-data';
 
 ## 5. Integration Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  External Systems                                                │
-│  S/4HANA · Legacy ERP · EDI · 3rd-party portals                 │
-└──────────────┬───────────────────────────────────────────────────┘
-               │  CPI iFlow (protocol conversion + mapping)
-               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  SAP Integration Suite (CPI)                                     │
-│  • Adapters: IDoc, SOAP, REST, RFC, AS2, SFTP                   │
-│  • Mapping: XSLT / Groovy → canonical JSON payload              │
-│  • Auth: OAuth2 client credentials → BTP XSUAA                  │
-│  • Read queries must include ?$filter=IsActiveEntity eq true     │
-│    to avoid returning CAP Draft rows                             │
-└──────────────┬───────────────────────────────────────────────────┘
-               │  OData v4  POST /api/orders/SalesOrders
-               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  SAP CAP Application (this service)                              │
-│                                                                  │
-│  SalesOrderService → Domain Handlers → HANA Cloud               │
-│                               │                                  │
-│                          CAP Outbox (same HANA tx)               │
-│                               │                                  │
-└───────────────────────────────┼──────────────────────────────────┘
-                                │  CloudEvents 1.0
-                                ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  SAP Event Mesh                                                  │
-│  Topic: com/my/sales/salesorder/+/v1                            │
-└────────┬──────────────────────────────────────────────────────┬──┘
-         │                                                      │
-         ▼                                                      ▼
-┌────────────────┐                                   ┌──────────────┐
-│ CPI iFlow      │                                   │ SAP Build    │
-│ (WM / TM       │                                   │ Process Auto │
-│  integration)  │                                   │ (workflows)  │
-└────────────────┘                                   └──────────────┘
+```mermaid
+flowchart TD
+    A["External Systems<br/>S/4HANA - Legacy ERP - EDI - 3rd-party portals"] -->|"CPI iFlow<br/>protocol conversion + mapping"| B
+    B["SAP Integration Suite (CPI)<br/>Adapters: IDoc/SOAP/REST/RFC/AS2/SFTP<br/>Mapping: XSLT/Groovy to canonical JSON<br/>Auth: OAuth2 client credentials to BTP XSUAA<br/><i>Reads must filter IsActiveEntity eq true</i>"] -->|"OData v4<br/>POST /api/orders/SalesOrders"| C
+    C["SAP CAP Application (this service)<br/>SalesOrderService to Domain Handlers to HANA Cloud<br/>CAP Outbox (same HANA tx)"] -->|"CloudEvents 1.0"| D
+    D["SAP Event Mesh<br/>Topic: com/my/sales/salesorder/+/v1"] --> E["CPI iFlow<br/>(WM / TM integration)"]
+    D --> F["SAP Build Process Automation<br/>(workflows)"]
+
+    style C fill:#e8f0fe,stroke:#4285f4
+    style D fill:#fef7e0,stroke:#f9ab00
 ```
 
 ---
