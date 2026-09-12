@@ -41,29 +41,23 @@ Organizações que utilizam SAP precisam criar extensões ou aplicações side-b
 
 ### 1.3 Arquitetura Geral
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CONSUMIDORES                             │
-│  Fiori/SAPUI5 │ SAP Build Apps │ SAP Joule │ CPI │ SAC/BW     │
-└──────────────────────┬──────────────────────────────────────────┘
-                       │ OData v4 / REST
-┌──────────────────────▼──────────────────────────────────────────┐
-│                   CAMADA DE SERVIÇOS OData                      │
-│  SalesOrderService    SalesCatalogService    SalesAnalyticsService │
-│  /api/orders          /api/catalog           /api/analytics      │
-└──────────────────────┬──────────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────────┐
-│               CAMADA DE DOMÍNIO (TypeScript)                    │
-│   SalesOrderHandler │ SalesOrderValidator │ StatusMachine       │
-│                     │ EventPublisher                            │
-└──────────┬──────────┴────────────────────┬────────────────────-┘
-           │ CQL (CAP Query Language)       │ CloudEvents 1.0
-┌──────────▼──────────┐         ┌──────────▼────────────────────┐
-│  BANCO DE DADOS      │         │   SAP EVENT MESH              │
-│  SQLite (dev/test)  │         │   (produção via Outbox)       │
-│  SAP HANA (prod)    │         └───────────────────────────────┘
-└─────────────────────┘
+```mermaid
+flowchart TD
+    Consumers["<b>CONSUMIDORES</b><br/>Fiori/SAPUI5 - SAP Build Apps<br/>SAP Joule - CPI - SAC/BW"]
+    Services["<b>CAMADA DE SERVICOS OData</b><br/>SalesOrderService /api/orders<br/>SalesCatalogService /api/catalog<br/>SalesAnalyticsService /api/analytics"]
+    Domain["<b>CAMADA DE DOMINIO (TypeScript)</b><br/>SalesOrderHandler - SalesOrderValidator<br/>StatusMachine - EventPublisher"]
+    DB["<b>BANCO DE DADOS</b><br/>SQLite (dev/test)<br/>SAP HANA (prod)"]
+    EM["<b>SAP EVENT MESH</b><br/>producao via Outbox"]
+
+    Consumers -->|"OData v4 / REST"| Services
+    Services --> Domain
+    Domain -->|"CQL (CAP Query Language)"| DB
+    Domain -->|"CloudEvents 1.0"| EM
+
+    style Consumers fill:#e8f0fe,stroke:#4285f4
+    style Domain fill:#e6f4ea,stroke:#34a853
+    style DB fill:#fef7e0,stroke:#f9ab00
+    style EM fill:#fef7e0,stroke:#f9ab00
 ```
 
 ### 1.4 Principais Tecnologias
@@ -82,25 +76,20 @@ Organizações que utilizam SAP precisam criar extensões ou aplicações side-b
 
 ### 1.5 Fluxo de Funcionamento
 
-```
-Usuário/Sistema Externo
-        │
-        ▼
-[1] Autenticação via XSUAA (token JWT com scopes/roles)
-        │
-        ▼
-[2] OData v4 Request → CAP Runtime
-        │ (valida roles @requires, processa draft, normaliza req)
-        ▼
-[3] SalesOrderHandler (TypeScript)
-        │ hook before/on/after
-        ├─[3a] Validação de negócio (SalesOrderValidator)
-        ├─[3b] Transição de estado (StatusMachine)
-        ├─[3c] Leitura/Escrita no banco (CQL)
-        └─[3d] Publicação de evento (EventPublisher → Outbox)
-        │
-        ▼
-[4] Resposta OData JSON ao consumidor
+```mermaid
+flowchart TD
+    A["Usuario / Sistema Externo"] --> B["[1] Autenticacao via XSUAA<br/>token JWT com scopes/roles"]
+    B --> C["[2] OData v4 Request - CAP Runtime<br/>valida roles, processa draft, normaliza req"]
+    C --> D["[3] SalesOrderHandler (TypeScript)<br/>hook before/on/after"]
+    D --> D1["[3a] Validacao de negocio<br/>SalesOrderValidator"]
+    D --> D2["[3b] Transicao de estado<br/>StatusMachine"]
+    D --> D3["[3c] Leitura/Escrita no banco<br/>CQL"]
+    D --> D4["[3d] Publicacao de evento<br/>EventPublisher - Outbox"]
+    D1 & D2 & D3 & D4 --> E["[4] Resposta OData JSON ao consumidor"]
+
+    style A fill:#e8f0fe,stroke:#4285f4
+    style D fill:#e6f4ea,stroke:#34a853
+    style E fill:#e8f0fe,stroke:#4285f4
 ```
 
 ---
