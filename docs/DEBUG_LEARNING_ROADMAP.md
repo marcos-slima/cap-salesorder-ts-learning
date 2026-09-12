@@ -11,23 +11,16 @@
 
 ## Orientation: How the Project Is Layered
 
-```
-Fiori FE / External Clients
-         │
-         ▼
-  CAP OData Runtime  ←── srv/server.ts (boot hooks)
-         │
-         ▼
-  Service Projections  ←── srv/services/*.cds  (API contract)
-         │
-         ▼
-  Handler Orchestration  ←── srv/handlers/*.ts  (behavior)
-  + Validator + StatusMachine + EventPublisher
-         │
-         ▼
-  Database (SQLite dev / HANA prod)  ←── db/**/*.cds (model)
-         │
-         ◄── Messaging (file-based dev / Event Mesh prod)
+```mermaid
+flowchart TD
+    A["CAP OData Runtime<br/><i>srv/server.ts (boot hooks)</i>"] --> B["Service Projections<br/><i>srv/services/*.cds (API contract)</i>"]
+    B --> C["Handler Orchestration<br/><i>srv/handlers/*.ts (behavior)</i>"]
+    C --> D["Database<br/>SQLite dev / HANA prod<br/><i>db/**/*.cds (model)</i>"]
+    D --> E["Messaging<br/>file-based dev / Event Mesh prod"]
+
+    style A fill:#e8f0fe,stroke:#4285f4
+    style D fill:#fef7e0,stroke:#f9ab00
+    style E fill:#fef7e0,stroke:#f9ab00
 ```
 
 Each step in this roadmap drills one layer deeper.
@@ -147,18 +140,23 @@ Learn the persistent domain model from the bottom up before looking at any servi
 
 In `domain/sales-orders.cds`, trace the ownership chain:
 
-```
-SalesOrders  (cuid + managed + SoftDeletable + StatusTracked + EventEmitting)
-  │
-  ├─ items           : Composition → SalesOrderItems  (cuid + managed + SoftDeletable)
-  │     ├─ conditions  : Composition → SalesOrderItemConditions
-  │     ├─ scheduleLines : Composition → SalesOrderScheduleLines
-  │     └─ texts        : Composition → SalesOrderItemTexts
-  │
-  ├─ partners        : Composition → SalesOrderPartners
-  │     soldTo / shipTo / billTo (filtered associations over partners)
-  │
-  └─ texts           : Composition → SalesOrderHeaderTexts
+```mermaid
+flowchart TB
+    Root["<b>SalesOrders</b><br/>cuid + managed + SoftDeletable<br/>StatusTracked + EventEmitting"]
+    Items["SalesOrderItems<br/>cuid + managed + SoftDeletable"]
+    Cond["SalesOrderItemConditions"]
+    Sched["SalesOrderScheduleLines"]
+    Texts["SalesOrderItemTexts"]
+    Partners["SalesOrderPartners<br/>soldTo / shipTo / billTo"]
+    HTexts["SalesOrderHeaderTexts"]
+    Root -->|"Composition"| Items
+    Root -->|"Composition"| Partners
+    Root -->|"Composition"| HTexts
+    Items -->|"Composition"| Cond
+    Items -->|"Composition"| Sched
+    Items -->|"Composition"| Texts
+
+    style Root fill:#e8f0fe,stroke:#4285f4
 ```
 
 For each child, ask: is it `Composition` or `Association`? If `Composition`, its lifecycle is owned by the parent. If `Association`, it points to an independently-managed entity.
@@ -250,36 +248,39 @@ Learn where business rules actually execute and how CAP wires handlers into the 
 | [srv/lib/validations.ts](../srv/lib/validations.ts) | Domain validation rules |
 | [srv/lib/status-machine.ts](../srv/lib/status-machine.ts) | Legal status transitions |
 | [srv/lib/events.ts](../srv/lib/events.ts) | Event publisher and type constants |
+```mermaid
+flowchart TD
+    A["CAP runtime<br/>SalesOrderService.init()"]
+    A --> G1["guard: transactional service?"]
+    A --> G2["guard: entities.SalesOrders exists?"]
+    G1 --> H1
+    G2 --> H1
 
-### The Handler Orchestration Pattern
+    subgraph H1["OrderHeaderHandler.register()"]
+        H1A["before DELETE → reject 405"]
+        H1B["before UPDATE → guardLogicallyDeleted"]
+        H1C["before CREATE → validateNewOrder"]
+        H1D["after CREATE → afterOrderCreated (emit event)"]
+        H1E["on submitOrder / confirmDelivery<br/>recalculatePricing / logicalDelete"]
+        H1F["on GET /health / POST /delivery-webhook"]
+    end
 
-```
-CAP runtime calls SalesOrderService.init()
-  │
-  ├─ reads this.name  →  guard: is this a transactional service?
-  ├─ guard: does this.entities['SalesOrders'] exist?
-  │
-  ├─ new OrderHeaderHandler(...).register()
-  │    ├─ before DELETE SalesOrders   → reject 405
-  │    ├─ before UPDATE SalesOrders   → guardLogicallyDeleted
-  │    ├─ before CREATE SalesOrders   → validateNewOrder
-  │    ├─ after  CREATE SalesOrders   → afterOrderCreated (emit event)
-  │    ├─ on submitOrder              → onSubmitOrder
-  │    ├─ on confirmDelivery          → onConfirmDelivery
-  │    ├─ on recalculatePricing       → onRecalculatePricing
-  │    ├─ on logicalDelete            → onLogicalDelete
-  │    ├─ on GET /health              → customHealthCheck
-  │    └─ on POST /delivery-webhook  → onDeliveryWebhook
-  │
-  ├─ new OrderItemHandler(...).register()
-  │    ├─ after  CREATE/UPDATE SalesOrderItems  → recomputeHeaderNetAmount
-  │    ├─ before DELETE SalesOrderItems         → captureItemOrderID
-  │    ├─ after  DELETE SalesOrderItems         → recomputeHeaderNetAmount
-  │    └─ on addToDelivery                      → onAddToDelivery
-  │
-  └─ EventConsumerHandler.register()  (SalesOrderService only)
-       ├─ messaging.on 'wms/delivery/confirmed/v1'
-       └─ messaging.on 'tms/shipment/dispatched/v1'
+    subgraph H2["OrderItemHandler.register()"]
+        H2A["after CREATE/UPDATE → recomputeHeaderNetAmount"]
+        H2B["before/after DELETE → captureItemOrderID / recompute"]
+        H2C["on addToDelivery"]
+    end
+
+    subgraph H3["EventConsumerHandler.register()"]
+        H3A["messaging.on wms/delivery/confirmed/v1"]
+        H3B["messaging.on tms/shipment/dispatched/v1"]
+    end
+
+    A --> H1
+    A --> H2
+    A --> H3
+
+    style A fill:#e8f0fe,stroke:#4285f4
 ```
 
 ### Suggested Breakpoints
@@ -537,56 +538,49 @@ Understand both synchronous external fetches and asynchronous event-driven integ
 
 ### Synchronous Integration Flow
 
-```
-POST /api/integration/importFromNorthwind
-  │
-  ▼
-IntegrationService.onImportFromNorthwind
-  │
-  ▼
-ImportOrchestrator.importFromNorthwind(maxOrders)
-  │
-  ├─ NorthwindClient.fetchOrders()         → HTTP GET Northwind OData API
-  ├─ unmarshalODataOrders(response)        → strip @odata envelope
-  ├─ transform (currency, totals, IDs)
-  ├─ UPSERT NorthwindOrders (shadow)       → staging area
-  ├─ UPSERT local SalesOrders / Items      → domain persistence
-  └─ INSERT ImportRuns (audit log)
-```
+```mermaid
+flowchart TD
+    A["POST /api/integration/importFromNorthwind"] --> B["IntegrationService<br/>onImportFromNorthwind"]
+    B --> C["ImportOrchestrator<br/>importFromNorthwind(maxOrders)"]
+    C --> D["NorthwindClient.fetchOrders()<br/>HTTP GET Northwind OData API"]
+    C --> E["unmarshalODataOrders()<br/>strip @odata envelope"]
+    C --> F["transform (currency, totals, IDs)"]
+    C --> G["UPSERT NorthwindOrders (shadow)<br/>staging area"]
+    C --> H["UPSERT local SalesOrders / Items<br/>domain persistence"]
+    C --> I["INSERT ImportRuns (audit log)"]
+
+    style A fill:#e8f0fe,stroke:#4285f4
+    style C fill:#e8f0fe,stroke:#4285f4
+`````
 
 ### Asynchronous Integration Flow (bidirectional messaging)
 
 **Outbound** (local domain → Event Mesh):
-```
-submitOrder action completes
-  │
-  ▼
-EventPublisher.publish('ORDER_SUBMITTED', payload)
-  │
-  ▼
-CAP Outbox writes to OutboxMessages table (same transaction)
-  │
-  ▼ (background job)
-Event Mesh receives: com/my/sales/salesorder/submitted/v1
-  │
-  ▼
-WMS starts pick/pack
-```
+```mermaid
+flowchart TD
+    A["submitOrder action completes"] --> B["EventPublisher.publish<br/>ORDER_SUBMITTED, payload"]
+    B --> C["CAP Outbox writes to OutboxMessages<br/>(same transaction)"]
+    C --> D["background job"]
+    D --> E["Event Mesh receives<br/>com/my/sales/salesorder/submitted/v1"]
+    E --> F["WMS starts pick/pack"]
+
+    style C fill:#fef7e0,stroke:#f9ab00
+    style E fill:#fef7e0,stroke:#f9ab00
+````
 
 **Inbound** (Event Mesh → local domain):
-```
-WMS confirms delivery
-  │
-  ▼
-Event Mesh publishes: wms/delivery/confirmed/v1
-  │
-  ▼
-EventConsumerHandler._handleDeliveryConfirmed(payload)
-  │
-  ├─ SELECT ... forUpdate (idempotency lock)
-  ├─ guard: already deliveryStatus='C'? → discard (at-least-once delivery)
-  ├─ UPDATE deliveryStatus='C', overallStatus=computed
-  └─ UPSERT SalesOrderHeaderTexts ZWMS (tracking note)
+```mermaid
+flowchart TD
+    A["WMS confirms delivery"] --> B["Event Mesh publishes<br/>wms/delivery/confirmed/v1"]
+    B --> C["EventConsumerHandler<br/>_handleDeliveryConfirmed(payload)"]
+    C --> D["SELECT forUpdate<br/>idempotency lock"]
+    D --> E{"already<br/>deliveryStatus=C?"}
+    E -->|"sim"| F["discard<br/>at-least-once delivery"]
+    E -->|"nao"| G["UPDATE deliveryStatus=C<br/>overallStatus=computed"]
+    G --> H["UPSERT SalesOrderHeaderTexts ZWMS<br/>tracking note"]
+
+    style B fill:#fef7e0,stroke:#f9ab00
+    style E fill:#f5f5f5,stroke:#999
 ```
 
 ### Suggested Breakpoints
