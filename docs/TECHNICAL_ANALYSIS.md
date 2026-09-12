@@ -1155,55 +1155,30 @@ app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 ## 12.1 Diagrama Arquitetônico
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         SAP BTP                                  │
-│                                                                  │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
-│  │  Cloud Foundry   │  │   API Mesh       │  │   Auth       │  │
-│  │  (Runtime)       │  │   (API Gateway)  │  │   (XSUAA)    │  │
-│  └────────┬─────────┘  └────────┬─────────┘  └──────┬───────┘  │
-│           │                     │                   │           │
-│  ┌────────▼─────────────────────▼───────────────────▼────────┐  │
-│  │              CAP Microservice (Node.js)                    │  │
-│  │  ┌────────────────────────────────────────────────────┐   │  │
-│  │  │ Express.js Middleware Stack                        │   │  │
-│  │  │ • CORS, CSRF, Rate Limiting, Request Logging      │   │  │
-│  │  │ • Error Handling, Compression                      │   │  │
-│  │  └────────────────────────────────────────────────────┘   │  │
-│  │  ┌────────────────────────────────────────────────────┐   │  │
-│  │  │ CAP Application Services                           │   │  │
-│  │  │ • SalesOrderService (CRUD + Actions)              │   │  │
-│  │  │ • SalesAnalyticsService (Analytical Views)        │   │  │
-│  │  │ • IntegrationService (ERP Sync)                   │   │  │
-│  │  └────────────────────────────────────────────────────┘   │  │
-│  │  ┌────────────────────────────────────────────────────┐   │  │
-│  │  │ Business Logic (Handlers + Validators)            │   │  │
-│  │  │ • before/on/after hooks                           │   │  │
-│  │  │ • Domain invariants, state machines               │   │  │
-│  │  │ • Validation rules                                │   │  │
-│  │  └────────────────────────────────────────────────────┘   │  │
-│  │  ┌────────────────────────────────────────────────────┐   │  │
-│  │  │ Data Access (Persistence)                         │   │  │
-│  │  │ • CQL queries, ORM abstractions                   │   │  │
-│  │  │ • Change tracking, audit logs                     │   │  │
-│  │  └────────────────────────────────────────────────────┘   │  │
-│  └──────────────────────────┬───────────────────────────────┘  │
-│                             │                                   │
-│  ┌──────────────────┬───────▼────────┬────────────────────┐    │
-│  │                  │                │                    │    │
-│  ▼                  ▼                ▼                    ▼    │
-│ SAP HANA          Dest Service     Event Mesh        Cloud Log │
-│ Cloud (SQL)       (Northwind)      (SAP EM)          (Monitor) │
-│                                                                 │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │ SAP BTP Observability                                 │   │
-│  │ • Cloud Logging (centralized logs)                    │   │
-│  │ • OpenTelemetry (distributed tracing)                │   │
-│  │ • Metrics (Prometheus/Grafana)                       │   │
-│  └────────────────────────────────────────────────────────┘   │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph BTP["BTP Subaccount (edc28716trial)"]
+        subgraph CF["Cloud Foundry Space (dev)"]
+            APP["cap-salesorder-ts-srv<br/>Node.js - CAP 10.x<br/>256MB RAM"]
+            DB["cap-salesorder-db<br/>HDI Container<br/>HANA Cloud"]
+            AUTH["cap-salesorder-auth<br/>XSUAA<br/>tenant-mode: dedicated"]
+        end
+        HANA["HANA Cloud Free Tier<br/>Stops daily at 1PM local<br/>Resume via HANA Cloud Central"]
+        EM["Event Mesh (via Solace Cloud)<br/>AMQP 1.0 - rhea library<br/>SolaceMessagingService"]
+    end
+
+    EXT["External Systems<br/>Northwind OData API<br/>WMS / TMS (messaging)"]
+
+    APP --> DB
+    APP --> AUTH
+    DB --> HANA
+    APP -->|"CloudEvents 1.0"| EM
+    EXT -->|"HTTP / Event Mesh"| APP
+
+    style APP fill:#e8f0fe,stroke:#4285f4
+    style HANA fill:#fef7e0,stroke:#f9ab00
+    style EM fill:#fef7e0,stroke:#f9ab00
+    style AUTH fill:#e6f4ea,stroke:#34a853
 ```
 
 ## 12.2 Padrões Recomendados
