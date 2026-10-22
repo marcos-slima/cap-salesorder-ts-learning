@@ -48,10 +48,16 @@
     "jest": "^29",
     "ts-jest": "^29",
     "ts-node": "^10",
+    "tsc-ts": "^0.0.7",
     "tsx": "^4.20.6"
   },
   "overrides": {
-    "axios": "^1.15.0"
+    "axios": "^1.15.0",
+    "@sap/cds": "^10.1.0",
+    "@sap/cds-compiler": "^7.1.0",
+    "@sap/cds-mtxs": "^2.7.7",
+    "@cap-js/db-service": "^3.1.0",
+    "@cap-js/sqlite": "^3.1.0"
   },
   "cds": {
     "typescript": true,
