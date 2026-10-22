@@ -59,7 +59,7 @@ export default class IntegrationService extends cds.ApplicationService {
   async init(): Promise<void> {
     await super.init()
 
-    if (!this.entities['ImportRuns']) return  // guard for sibling services
+    if (!('entities' in this) || !this.entities['ImportRuns']) return  // guard for sibling services
 
     const http = IntegrationService.httpClient ?? new AxiosHttpClient()
     const db   = await cds.connect.to('db')
@@ -71,13 +71,13 @@ export default class IntegrationService extends cds.ApplicationService {
     )
 
     // ── Action handlers ───────────────────────────────────────────
-    this.on('importFromNorthwind', this.onImportFromNorthwind.bind(this))
-    this.on('importFromRest',      this.onImportFromRest.bind(this))
-    this.on('importAll',           this.onImportAll.bind(this))
+    ;(this as any).on('importFromNorthwind', this.onImportFromNorthwind.bind(this))
+    ;(this as any).on('importFromRest',      this.onImportFromRest.bind(this))
+    ;(this as any).on('importAll',           this.onImportAll.bind(this))
 
     // ── Function handlers ─────────────────────────────────────────
-    this.on('marshalOrderToOData', this.onMarshalOrderToOData.bind(this))
-    this.on('marshalOrderToRest',  this.onMarshalOrderToRest.bind(this))
+    ;(this as any).on('marshalOrderToOData', this.onMarshalOrderToOData.bind(this))
+    ;(this as any).on('marshalOrderToRest',  this.onMarshalOrderToRest.bind(this))
   }
 
 
@@ -197,7 +197,7 @@ export default class IntegrationService extends cds.ApplicationService {
       SELECT.from('com.my.sales.SalesOrderItems')
         .columns('itemNumber', 'orderQuantity', 'netAmount', 'product_ID')
         .where({ order_ID: orderID, deletionIndicator: ' ' })
-    )
+    ) as unknown as Array<Record<string, unknown>>
 
     const enrichedItems = await Promise.all(
       items.map(async (item: Record<string, unknown>) => {

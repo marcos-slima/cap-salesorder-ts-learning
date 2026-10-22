@@ -18,6 +18,8 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule":            true,
     "skipLibCheck":                 true,
+    "types":                        ["@cap-js/cds-types", "jest", "node"],
+    "isolatedModules":              true,
 
     // Output — used by `npm run build` for production
     "outDir":  "dist",

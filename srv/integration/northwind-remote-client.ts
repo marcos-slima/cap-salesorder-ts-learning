@@ -94,8 +94,8 @@ export async function fetchNorthwindOrders(maxOrders = 5): Promise<NwOrder[]> {
             .limit(maxOrders)
     )
 
-    LOG.debug(`fetchNorthwindOrders: fetched ${rows.length} orders`)
-    return rows as NwOrder[]
+    LOG.debug(`fetchNorthwindOrders: fetched ${(rows as unknown as any[]).length} orders`)
+    return rows as unknown as NwOrder[]
 }
 
 
@@ -129,8 +129,8 @@ export async function fetchNorthwindProducts(maxProducts = 20): Promise<NwProduc
             .limit(maxProducts)
     )
 
-    LOG.debug(`fetchNorthwindProducts: fetched ${rows.length} products`)
-    return rows as NwProduct[]
+    LOG.debug(`fetchNorthwindProducts: fetched ${(rows as unknown as any[]).length} products`)
+    return rows as unknown as NwProduct[]
 }
 
 

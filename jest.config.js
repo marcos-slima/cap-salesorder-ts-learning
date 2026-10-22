@@ -9,7 +9,10 @@ const sharedConfig = {
   setupFiles     : ['<rootDir>/test/setup-env.ts'],
   modulePathIgnorePatterns: ['<rootDir>/gen/'],
   moduleNameMapper: {
-    '^#cds-models/(.*)$': '<rootDir>/@cds-models/$1'
+    '^#cds-models/(.*)$': '<rootDir>/@cds-models/$1',
+    // TypeScript 7 removed the compiler API; ts-jest needs it.
+    // Alias @typescript/typescript6 as 'typescript' so ts-jest finds it.
+    '^typescript$': '@typescript/typescript6'
   },
   transform: {
     '^.+\\.tsx?$': [
@@ -17,7 +20,8 @@ const sharedConfig = {
       {
         tsconfig    : './tsconfig.json',
         transpileOnly: true,
-        diagnostics : false
+        diagnostics : false,
+        isolatedModules: true
       }
     ]
   },

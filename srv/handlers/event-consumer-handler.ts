@@ -128,7 +128,7 @@ export class EventConsumerHandler {
         // Tópico: wms/delivery/confirmed/v1
         // Publicador: sistema WMS após confirmar baixa de estoque
         // Ação local: confirmDelivery(comment) no pedido correspondente
-        messaging.on('wms/delivery/confirmed/v1', async (msg) => {
+        messaging.on('wms/delivery/confirmed/v1', async (msg: any) => {
             await EventConsumerHandler._handleDeliveryConfirmed(
                 msg.data as DeliveryConfirmedPayload
             )
@@ -139,7 +139,7 @@ export class EventConsumerHandler {
         // Tópico: tms/shipment/dispatched/v1
         // Publicador: sistema TMS após registrar saída do veículo
         // Ação local: registrar texto de acompanhamento no pedido
-        messaging.on('tms/shipment/dispatched/v1', async (msg) => {
+        messaging.on('tms/shipment/dispatched/v1', async (msg: any) => {
             await EventConsumerHandler._handleShipmentDispatched(
                 msg.data as ShipmentDispatchedPayload
             )

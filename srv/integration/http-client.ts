@@ -85,14 +85,14 @@ export class AxiosHttpClient implements HttpClient {
     // Dynamic require keeps axios optional — avoids bundling it when
     // a mock client is injected in tests.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const axiosModule = require('axios')
-    const axios = (axiosModule.default ?? axiosModule) as import('axios').AxiosStatic
+    const axiosModule = require('axios') as unknown as { default?: unknown; [key: string]: unknown }
+    const axios = (axiosModule.default ?? axiosModule) as unknown as unknown
 
     const start = Date.now()
     LOG.debug(`GET ${url}`)
 
     try {
-      const resp = await axios.get<T>(url, {
+      const resp = await (axios as any).get(url, {
         headers: {
           Accept:  'application/json',
           ...headers

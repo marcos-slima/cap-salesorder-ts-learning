@@ -478,8 +478,11 @@ describe('IntegrationService — HTTP API', () => {
       const order = data.value.find((o: any) => o.northwindOrderID === 99901)
       expect(order).toBeDefined()
       expect(order.shipCountry).toBe('Germany')
-      // freightConverted should be freight × USD_EUR_RATE
-      expect(order.freightConverted).toBeCloseTo(50.00 * 0.92, 2)
+      // freightConverted may come back as string from SQLite — coerce to number
+      const freight = typeof order.freightConverted === 'string'
+        ? parseFloat(order.freightConverted)
+        : (order.freightConverted as number)
+      expect(freight).toBeCloseTo(50.00 * 0.92, 2)
     })
   })
 

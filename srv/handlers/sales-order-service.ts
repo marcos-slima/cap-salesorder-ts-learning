@@ -58,7 +58,7 @@ export default class SalesOrderService extends cds.ApplicationService {
   async init(): Promise<void> {
     await super.init()
 
-    const serviceName = this.name
+    const serviceName = (this as any).name as string
 
     // Guard: CAP's _sibling() discovery associates this file with every
     // service defined in sales-order-service.cds (SalesCatalogService,
@@ -68,9 +68,9 @@ export default class SalesOrderService extends cds.ApplicationService {
       serviceName.endsWith('SalesOrderService') ||
       serviceName.endsWith('SalesOperationalService')
 
-    if (!isTransactionalService || !this.entities['SalesOrders']) return
+    if (!isTransactionalService || !((this as any).entities as Record<string, any>)['SalesOrders']) return
 
-    this.validator    = new SalesOrderValidator(this.entities)
+    this.validator    = new SalesOrderValidator((this as any).entities)
     this.stateMachine = new StatusMachine()
     this.publisher    = new EventPublisher()
 
@@ -79,11 +79,11 @@ export default class SalesOrderService extends cds.ApplicationService {
     //   1. Header handler registers the DELETE-405 guard and UPDATE guard first.
     //   2. Item handler registers after — no ordering conflict with header hooks.
     new OrderHeaderHandler(
-      this, this.entities, this.validator, this.stateMachine, this.publisher
+      this, (this as any).entities, this.validator, this.stateMachine, this.publisher
     ).register()
 
     new OrderItemHandler(
-      this, this.entities, this.publisher
+      this, (this as any).entities, this.publisher
     ).register()
 
     // Messaging bidirecional — inbound event consumer.

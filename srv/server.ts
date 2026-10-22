@@ -6,4 +6,4 @@ cds.on('listening', ({ url }: any) => {
   console.info('  API endpoints are available under /api/*\n')
 })
 
-cds.on('READ', req => console.log('[OData READ]', req.target.name, req.query))
+cds.on('READ' as any, (req: any) => console.log('[OData READ]', req.target.name, req.query))

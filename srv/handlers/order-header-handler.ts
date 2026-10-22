@@ -18,7 +18,7 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-import cds from '@sap/cds'
+import cds, { type Request } from '@sap/cds'
 
 import { EVENT_TYPES }                from '../lib/events'
 import type { SalesOrderValidator }   from '../lib/validations'
@@ -53,7 +53,7 @@ export class OrderHeaderHandler {
     const { SalesOrders } = this.entities
 
     // Guards
-    this.svc.before('DELETE', SalesOrders, (req) =>
+    this.svc.before('DELETE', SalesOrders, (req: Request) =>
       req.reject(405,
         'Physical DELETE is not permitted on SalesOrders. ' +
         'Use the logicalDelete bound action to soft-delete.'))
@@ -63,7 +63,7 @@ export class OrderHeaderHandler {
 
     // Validation
     this.svc.before('CREATE', SalesOrders,
-      this.validateNewOrder.bind(this))
+      async (req: Request) => await this.validateNewOrder(req))
 
     // Lifecycle
     this.svc.after('CREATE', SalesOrders,
