@@ -9,13 +9,13 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "dev": "tsgo --noEmit && cds watch",
-    "dev:app": "tsgo --noEmit && cds watch --port 4004",
-    "dev:mtx": "tsgo --noEmit && cds watch --port 4005 srv/mtx/sidecar.ts",
+    "dev": "cds watch",
+    "dev:app": "cds watch --port 4004",
+    "dev:mtx": "cds watch --port 4005 srv/mtx/sidecar.ts",
     "build": "tsgo --noEmit && cds build --production",
     "typecheck": "tsgo --noEmit",
     "test": "tsgo --noEmit && jest --config jest.config.js --forceExit --detectOpenHandles",
-    "test:watch": "jest --config jest.config.js --watch",
+    "test:watch": "tsgo --noEmit && jest --config jest.config.js --watch",
     "test:coverage": "tsgo --noEmit && jest --config jest.config.js --coverage --forceExit",
     "ci": "tsgo --noEmit && npm run lint && npm test",
     "postinstall": "tsgo --noEmit",
@@ -49,7 +49,8 @@
     "eslint": "^10.10.0",
     "jest": "^30.5.2",
     "ts-jest": "^29",
-    "tsx": "^4.20.6"
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "axios": "^1.15.0",
