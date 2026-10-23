@@ -9,17 +9,18 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "dev": "cds watch",
-    "dev:app": "cds watch --port 4004",
-    "dev:mtx": "cds watch --port 4005 srv/mtx/sidecar.ts",
-    "build": "cds build --production",
+    "dev": "tsgo --noEmit && cds watch",
+    "dev:app": "tsgo --noEmit && cds watch --port 4004",
+    "dev:mtx": "tsgo --noEmit && cds watch --port 4005 srv/mtx/sidecar.ts",
+    "build": "tsgo --noEmit && cds build --production",
     "typecheck": "tsgo --noEmit",
-    "test": "jest --config jest.config.js --forceExit --detectOpenHandles",
+    "test": "tsgo --noEmit && jest --config jest.config.js --forceExit --detectOpenHandles",
     "test:watch": "jest --config jest.config.js --watch",
-    "test:coverage": "jest --config jest.config.js --coverage --forceExit",
-    "ci": "npm run typecheck && npm run lint && npm test",
-    "typegen": "cds-typer '*' --outputDirectory @cds-models",
-    "lint": "eslint ."
+    "test:coverage": "tsgo --noEmit && jest --config jest.config.js --coverage --forceExit",
+    "ci": "tsgo --noEmit && npm run lint && npm test",
+    "postinstall": "tsgo --noEmit",
+    "typegen": "tsgo --noEmit && cds-typer '*' --outputDirectory @cds-models",
+    "lint": "tsgo --noEmit && eslint ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1127.0",
@@ -48,9 +49,7 @@
     "eslint": "^10.10.0",
     "jest": "^30.5.2",
     "ts-jest": "^29",
-    "ts-node": "^10",
-    "tsx": "^4.20.6",
-    "typescript": "^6.0.3"
+    "tsx": "^4.20.6"
   },
   "overrides": {
     "axios": "^1.15.0",
@@ -59,8 +58,8 @@
     "@cap-js/db-service": "^3.1.0",
     "@cap-js/sqlite": "^3.1.0"
   },
+  "packageManager": "npm@12.0.2",
   "cds": {
-    "typescript": true,
     "requires": {
       "db": {
         "[development]": {

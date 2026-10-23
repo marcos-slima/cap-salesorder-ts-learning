@@ -43,6 +43,10 @@ mta-op-*/
 # TypeScript incremental build info
 *.tsbuildinfo
 
+# Prevent accidental use of ts-node (non-native preview)
+node_modules/ts-node
+node_modules/tslib
+
 # Coverage
 coverage/
 
