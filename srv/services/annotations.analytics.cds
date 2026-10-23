@@ -16,6 +16,7 @@ annotate analytics.OpenOrdersQuery with {
     billingStatus            @Analytics.Dimension: true;
     transactionCurrency_code @Analytics.Dimension: true;
     transactionCurrency_code @Common.Label: 'Moeda';
+    transactionCurrency_code @Aggregation.default: #MAX;
     netAmount                @Analytics.Measure: true  @Aggregation.default: #SUM;
     netAmount                @Measures.ISOCurrency: transactionCurrency_code;
 };
@@ -26,6 +27,10 @@ annotate analytics.OpenOrdersQuery with @(
     // "Result type for custom aggregation ... not found").
     Aggregation.CustomAggregate #netAmount    : 'Edm.Decimal',
     Aggregation.CustomAggregate #NetAmountSum : 'Edm.Decimal',
+    // UI5 also aggregates the currency of a semantic amount
+    // (`aggregate(netAmount,transactionCurrency_code)`), so it needs
+    // a custom-aggregate declaration + default method as well.
+    Aggregation.CustomAggregate #transactionCurrency_code : 'Edm.String',
     Analytics.AggregatedProperty #NetAmountSum: {
         $Type               : 'Analytics.AggregatedPropertyType',
         Name                : 'NetAmountSum',
@@ -58,7 +63,8 @@ annotate analytics.ItemRevenueQuery with {
 
 annotate analytics.DeliveryScheduleQuery with @(
     Aggregation.CustomAggregate #confirmedQty : 'Edm.Decimal',
-    Aggregation.CustomAggregate #requestedQty : 'Edm.Decimal'
+    Aggregation.CustomAggregate #requestedQty : 'Edm.Decimal',
+    Aggregation.CustomAggregate #quantityUnit : 'Edm.String'
 );
 annotate analytics.DeliveryScheduleQuery with {
     salesOrderNumber         @Analytics.Dimension: true;
@@ -68,6 +74,7 @@ annotate analytics.DeliveryScheduleQuery with {
     productName              @Analytics.Dimension: true;
     deliveryDate             @Analytics.Dimension: true;
     quantityUnit             @Analytics.Dimension: true;
+    quantityUnit             @Aggregation.default: #MAX;
     scheduleLineCategoryCode @Analytics.Dimension: true;
     confirmedQty             @Analytics.Measure: true  @Aggregation.default: #SUM;
     requestedQty             @Analytics.Measure: true  @Aggregation.default: #SUM;
