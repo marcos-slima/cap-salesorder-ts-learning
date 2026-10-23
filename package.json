@@ -60,6 +60,7 @@
   },
   "packageManager": "npm@12.0.2",
   "cds": {
+    "typescript": true,
     "requires": {
       "db": {
         "[development]": {
