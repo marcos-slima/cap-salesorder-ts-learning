@@ -10,7 +10,6 @@ annotate analytics.OpenOrdersQuery with {
     salesOrgCode             @Analytics.Dimension: true;
     distributionChannelCode  @Analytics.Dimension: true;
     soldToName               @Analytics.Dimension: true;
-    name                     @Analytics.Dimension: true;
     overallStatus            @Analytics.Dimension: true;
     deliveryStatus           @Analytics.Dimension: true;
     billingStatus            @Analytics.Dimension: true;

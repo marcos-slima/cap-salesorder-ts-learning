@@ -4,9 +4,7 @@ using SalesAnalyticsService as analytics from './sales-order-service';
 
 // UI annotations for transactional and analytical consumers.
 
-annotate service.SalesOrders with {
-    salesOrder @Common.SemanticKey;
-};
+annotate service.SalesOrders with @Common.SemanticKey: [salesOrder];
 
 annotate service.SalesOrders with @(
     UI.HeaderInfo: {
@@ -223,7 +221,6 @@ annotate analytics.OpenOrdersQuery with @(
         Data: [
             { Value: salesOrder,              Label: 'Order' },
             { Value: soldToName,              Label: 'Sold-To' },
-            { Value: name,                    Label: 'Customer Name' },
             { Value: salesOrgCode,            Label: 'Sales Org' },
             { Value: distributionChannelCode, Label: 'Distribution Channel' },
             { Value: orderDate,               Label: 'Order Date' },

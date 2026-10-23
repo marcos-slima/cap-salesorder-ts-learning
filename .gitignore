@@ -37,6 +37,12 @@ Thumbs.db
 *.log
 logs/
 
+# MTA build temp directories
+mta-op-*/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
 # Coverage
 coverage/
 

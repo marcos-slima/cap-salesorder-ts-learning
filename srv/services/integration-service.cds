@@ -88,7 +88,7 @@ service IntegrationService {
      *                   max 20 — Northwind public API rate limit courtesy)
      * @returns          Summary with import run ID and record counts
      */
-    @restrict: [{ to: 'SalesManager' }]
+    @requires: 'SalesManager'
     action importFromNorthwind(maxOrders : Integer default 5)
         returns ImportSummary;
 
@@ -105,7 +105,7 @@ service IntegrationService {
      *
      * @param maxProducts  Maximum number of products to fetch (default 10)
      */
-    @restrict: [{ to: 'SalesManager' }]
+    @requires: 'SalesManager'
     action importFromRest(maxProducts : Integer default 10)
         returns ImportSummary;
 
@@ -115,7 +115,7 @@ service IntegrationService {
      * Convenience action that runs both import cycles sequentially
      * and returns a combined summary.
      */
-    @restrict: [{ to: 'SalesManager' }]
+    @requires: 'SalesManager'
     action importAll(
         maxOrders   : Integer default 5,
         maxProducts : Integer default 10
@@ -136,7 +136,7 @@ service IntegrationService {
      *
      * @param orderID  UUID of the local SalesOrder
      */
-    @restrict: [{ to: ['SalesManager', 'SalesAuditor'] }]
+    @requires: ['SalesManager', 'SalesAuditor']
     function marshalOrderToOData(orderID : UUID) returns MarshalResult;
 
     /**
@@ -147,7 +147,7 @@ service IntegrationService {
      *
      * @param orderID  UUID of the local SalesOrder
      */
-    @restrict: [{ to: ['SalesManager', 'SalesAuditor'] }]
+    @requires: ['SalesManager', 'SalesAuditor']
     function marshalOrderToRest(orderID : UUID) returns MarshalResult;
 
 

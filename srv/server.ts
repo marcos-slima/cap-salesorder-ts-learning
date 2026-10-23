@@ -1,9 +1,9 @@
 import cds from '@sap/cds'
 
-// Log on successful startup
-cds.on('listening', ({ url }: any) => {
-  console.info(`\n[server] ✓ CAP server is listening on ${url}`)
-  console.info('  API endpoints are available under /api/*\n')
-})
+const LOG = cds.log('server')
 
-cds.on('READ' as any, (req: any) => console.log('[OData READ]', req.target.name, req.query))
+// Log on successful startup
+cds.on('listening', ({ url }: { url: string }) => {
+  LOG.info(`CAP server listening on ${url}`)
+  LOG.info('API endpoints are available under /api/*')
+})

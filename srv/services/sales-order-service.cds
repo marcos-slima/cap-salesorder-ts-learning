@@ -515,7 +515,6 @@ service SalesAnalyticsService {
             orderDate,
             salesOrder,
             soldToName,
-            name,
             transactionCurrency_code
         ],
         Rollup: #None,
@@ -534,8 +533,7 @@ service SalesAnalyticsService {
         transactionCurrencyCode as transactionCurrency_code,
         overallStatus as overallStatus,
         deliveryStatus as deliveryStatus,
-        billingStatus as billingStatus,
-        soldToName as name
+        billingStatus as billingStatus
     };
 
     /**

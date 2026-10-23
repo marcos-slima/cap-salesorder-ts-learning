@@ -9,36 +9,18 @@ const sharedConfig = {
   setupFiles     : ['<rootDir>/test/setup-env.ts'],
   modulePathIgnorePatterns: ['<rootDir>/gen/'],
   moduleNameMapper: {
-    '^#cds-models/(.*)$': '<rootDir>/@cds-models/$1',
-    // TypeScript 7 removed the compiler API; ts-jest needs it.
-    // Alias @typescript/typescript6 as 'typescript' so ts-jest finds it.
-    '^typescript$': '@typescript/typescript6'
+    '^#cds-models/(.*)$': '<rootDir>/@cds-models/$1'
   },
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig    : './tsconfig.json',
+        tsconfig      : './tsconfig.json',
+        // Type-checking is done separately by `npm run typecheck` (tsgo).
         transpileOnly: true,
-        diagnostics : false,
-        isolatedModules: true
+        diagnostics  : false
       }
     ]
-  },
-  testTimeout      : 30_000,
-  verbose          : true,
-  collectCoverageFrom: [
-    'srv/**/*.ts',
-    '!srv/types/**'
-  ],
-  coverageReporters: ['text', 'lcov'],
-  coverageThreshold: {
-    global: {
-      branches  : 70,
-      functions : 80,
-      lines     : 80,
-      statements: 80
-    }
   }
 }
 
@@ -83,9 +65,26 @@ const mtxProject = {
 }
 
 // ──────────────────────────────────────────────────────────────────
-//  Config raiz — usa `projects` para rodar ambos em paralelo
+//  Config raiz — opções globais + `projects` para rodar ambos
 // ──────────────────────────────────────────────────────────────────
 const config = {
+  testTimeout: 30_000,
+  verbose    : true,
+
+  collectCoverageFrom: [
+    'srv/**/*.ts',
+    '!srv/types/**'
+  ],
+  coverageReporters: ['text', 'lcov'],
+  coverageThreshold: {
+    global: {
+      branches  : 70,
+      functions : 80,
+      lines     : 80,
+      statements: 80
+    }
+  },
+
   projects: [mainProject, mtxProject]
 }
 
