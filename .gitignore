@@ -12,6 +12,8 @@ app/*/dist/
 # SQLite dev databases
 *.db
 *.sqlite
+*.sqlite-shm
+*.sqlite-wal
 
 # Environment variables — never commit secrets
 .env

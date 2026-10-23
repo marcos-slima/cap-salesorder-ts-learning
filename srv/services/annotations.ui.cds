@@ -254,7 +254,7 @@ annotate analytics.OpenOrdersQuery with @(
         ChartType      : #Bar,
         Title          : 'Net Amount by Sales Organisation',
         Dimensions     : [salesOrgCode],
-        DynamicMeasures: ['@Analytics.AggregatedProperty#NetAmountSum']
+        Measures       : [netAmount]
     },
     UI.PresentationVariant #ALP: {
         $Type         : 'UI.PresentationVariantType',

@@ -21,6 +21,11 @@ annotate analytics.OpenOrdersQuery with {
 };
 
 annotate analytics.OpenOrdersQuery with @(
+    // Required by CAP for $apply/aggregate without an explicit method
+    // (UI5 ALP sends `aggregate(netAmount)`; without this CAP returns
+    // "Result type for custom aggregation ... not found").
+    Aggregation.CustomAggregate #netAmount    : 'Edm.Decimal',
+    Aggregation.CustomAggregate #NetAmountSum : 'Edm.Decimal',
     Analytics.AggregatedProperty #NetAmountSum: {
         $Type               : 'Analytics.AggregatedPropertyType',
         Name                : 'NetAmountSum',
@@ -31,6 +36,10 @@ annotate analytics.OpenOrdersQuery with @(
     }
 );
 
+annotate analytics.ItemRevenueQuery with @(
+    Aggregation.CustomAggregate #netAmount     : 'Edm.Decimal',
+    Aggregation.CustomAggregate #orderQuantity : 'Edm.Decimal'
+);
 annotate analytics.ItemRevenueQuery with {
     ID                      @Analytics.Dimension: true;
     salesOrderNumber        @Analytics.Dimension: true;
@@ -47,6 +56,10 @@ annotate analytics.ItemRevenueQuery with {
     orderQuantity           @Analytics.Measure: true  @Aggregation.default: #SUM;
 };
 
+annotate analytics.DeliveryScheduleQuery with @(
+    Aggregation.CustomAggregate #confirmedQty : 'Edm.Decimal',
+    Aggregation.CustomAggregate #requestedQty : 'Edm.Decimal'
+);
 annotate analytics.DeliveryScheduleQuery with {
     salesOrderNumber         @Analytics.Dimension: true;
     itemNumber               @Analytics.Dimension: true;
